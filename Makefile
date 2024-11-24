@@ -4,7 +4,7 @@
 
 # see also: 
 #   build_in_docker.sh : use case example
-#   provision_bionic64.sh : prerequisites
+#   provision_*.sh : prerequisites
 
 all: main_target
 

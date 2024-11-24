@@ -1,8 +1,6 @@
 
 installer:
 	mkdir -p installer
-	cp $(src)/winpaths.py installer
-
 
 CURDIR:=$(shell pwd)
 PACMANPFX=$(CURDIR)/pacman
@@ -114,6 +112,7 @@ pip.stamp: pip_downloads/.stamp
 $(msysfinaldir)/.stamp: pip.stamp | installer
 	rm -rf $(msysfinaldir)
 	cp -a $(MSYS_DIR) $(msysfinaldir)
+	sed -i '/^db_home:/c\db_home: /%H/BeremizHome' $(msysfinaldir)/etc/nsswitch.conf
 	touch $@
 
 CROSS_COMPILE=x86_64-w64-mingw32
@@ -161,7 +160,13 @@ ide_revisions = installer/revisions.txt
 $(ide_revisions): revisions.txt
 	cp $< $@ 
 
-Beremiz-windows-build: $(msysfinaldir)/.stamp pip.stamp $(matiecdir)/.stamp $(beremizdir)/.stamp ide_targets_from_dist $(ide_revisions)
+Beremiz-windows-build: $(src)/license.txt $(src)/beremiz_ide.cmd $(src)/winpaths.py $(msysfinaldir)/.stamp pip.stamp $(matiecdir)/.stamp $(beremizdir)/.stamp ide_targets_from_dist $(ide_revisions)
+	export BVERSION=`python3 $(VERSIONPY)` ;\
+	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/license.txt > installer/license.txt ;\
+	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" $(src)/beremiz_ide.cmd |\
+	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > installer/beremiz_ide.cmd
+	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" $(src)/winpaths.py |\
+	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > installer/winpaths.py
 	touch $@
 
 Beremiz-portable.zip: Beremiz-windows-build
@@ -170,9 +175,8 @@ Beremiz-portable.zip: Beremiz-windows-build
 
 VERSIONPY=sources/beremiz/version.py
 
-Beremiz-nsis-installer.exe: Beremiz-windows-build $(src)/license.txt $(src)/install.nsi 
+Beremiz-nsis-installer.exe: Beremiz-windows-build $(src)/install.nsi 
 	export BVERSION=`python3 $(VERSIONPY)` ;\
-	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/license.txt > installer/license.txt ;\
 	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/install.nsi |\
 	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" |\
 	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > install.nsi
