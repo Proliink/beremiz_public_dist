@@ -1,23 +1,26 @@
 # Dockerfile to setup beremiz_public_dist build container
 
-FROM ubuntu:jammy
+FROM ubuntu:noble
 
 ENV TERM xterm-256color
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV TZ America/Paris
+ENV DEBIAN_FRONTEND noninteractive
 
 ARG UNAME=runner
 ENV UNAME ${UNAME}
 ARG UID=1000
 ARG GID=1000
+
+RUN sed -i "/$GID/d" /etc/group
+RUN sed -i "/$UID/d" /etc/passwd
+
 RUN groupadd -g $GID $UNAME
 RUN useradd -m -u $UID -g $GID -s /bin/bash $UNAME
 
-COPY ./provision_jammy64.sh .
+COPY ./provision_noble64.sh .
 
-RUN ./provision_jammy64.sh
+RUN ./provision_noble64.sh
 
 # easy to remember 'build' alias to invoke main makefile
 ARG OWNDIRBASENAME=beremiz_public_dist
