@@ -2,7 +2,8 @@
 
 main_target: Snap
 
-DIST_FROM_SOURCE_PROJECTS=canfestival Modbus open62541
+DIST_FROM_SOURCE_PROJECTS=canfestival Modbus
+// open62541 is systematically downloaded in main Makefile
 
 tar_opts=--absolute-names --exclude=.hg --exclude=.git --exclude=.*.pyc --exclude=.*.swp
 
