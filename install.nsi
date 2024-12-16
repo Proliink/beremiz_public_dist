@@ -30,8 +30,6 @@ SetDatablockOptimize off
 Name "Beremiz $BVERSION"
 OutFile "Beremiz-nsis-installer.exe"
 InstallDir "$PROGRAMFILES64\Beremiz"
-!define PYTHONW_EXE "$INSTDIR\$MSYS_DIR\$MSYS_ENV_DIR\bin\pythonw.exe"
-!define BEREMIZ_EXE '"$INSTDIR\beremiz\Beremiz.py" -e "$INSTDIR\winpaths.py"'
 
 Section "Beremiz" 
   SetOutPath $INSTDIR
@@ -59,8 +57,8 @@ Section "Shortcuts"
   SetShellVarContext all
   CreateDirectory "$SMPROGRAMS\Beremiz"
   SetOutPath "%HOMEDRIVE%%HOMEPATH%"
-; CreateShortCut "$SMPROGRAMS\Beremiz\PlcopenEditor.lnk" "${PYTHONW_EXE}" '"$INSTDIR\beremiz\plcopeneditor.py"' "$INSTDIR\beremiz\images\poe.ico"
-  CreateShortCut "$SMPROGRAMS\Beremiz\Beremiz.lnk" "${PYTHONW_EXE}" '${BEREMIZ_EXE}' "$INSTDIR\beremiz\images\brz.ico"
+  CreateShortCut "$SMPROGRAMS\Beremiz\PlcopenEditor.lnk" "$INSTDIR\plcopen_editor.cmd" "" "$INSTDIR\beremiz\images\poe.ico" "" SW_SHOWMINIMIZED
+  CreateShortCut "$SMPROGRAMS\Beremiz\Beremiz.lnk" "$INSTDIR\beremiz_ide.cmd" "" "$INSTDIR\beremiz\images\brz.ico" "" SW_SHOWMINIMIZED
   CreateShortCut "$SMPROGRAMS\Beremiz\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 SectionEnd
 
@@ -68,12 +66,11 @@ Section "Uninstall"
   SetRegView 64
   SetShellVarContext all
   Delete "$INSTDIR\Uninstall.exe"
-;  Delete "$SMPROGRAMS\Beremiz\PlcopenEditor.lnk"
+  Delete "$SMPROGRAMS\Beremiz\PlcopenEditor.lnk"
   Delete "$SMPROGRAMS\Beremiz\Beremiz.lnk"
   RMDir /R "$SMPROGRAMS\Beremiz"
   RMDir /R "$INSTDIR"
   DeleteRegKey /ifempty HKCU "Software\Beremiz"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Beremiz"
   SetShellVarContext current
-  Delete "$DESKTOP\Beremiz.lnk"
 SectionEnd

@@ -5,6 +5,7 @@ installer:
 CURDIR:=$(shell pwd)
 PACMANPFX=$(CURDIR)/pacman
 MSYS_DIR=msys64
+MSYSTEM=UCRT64
 MSYS_ENV_DIR=ucrt64
 MSYS_ENV=mingw-w64-ucrt-x86_64
 MSYS_ROOT=$(CURDIR)/$(MSYS_DIR)
@@ -160,13 +161,21 @@ ide_revisions = installer/revisions.txt
 $(ide_revisions): revisions.txt
 	cp $< $@ 
 
-Beremiz-windows-build: $(src)/license.txt $(src)/beremiz_ide.cmd $(src)/winpaths.py $(msysfinaldir)/.stamp pip.stamp $(matiecdir)/.stamp $(beremizdir)/.stamp ide_targets_from_dist $(ide_revisions)
+Beremiz-windows-build: $(src)/license.txt $(src)/beremiz_ide.cmd $(src)/plcopen_editor.cmd $(src)/winpaths.py $(msysfinaldir)/.stamp pip.stamp $(matiecdir)/.stamp $(beremizdir)/.stamp ide_targets_from_dist $(ide_revisions)
 	export BVERSION=`python3 $(VERSIONPY)` ;\
-	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/license.txt > installer/license.txt ;\
+	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/license.txt > installer/license.txt
+    
 	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" $(src)/beremiz_ide.cmd |\
+	sed -e "s#\$$MSYSTEM#$(MSYSTEM)#g" |\
 	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > installer/beremiz_ide.cmd
+	
+	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" $(src)/plcopen_editor.cmd |\
+	sed -e "s#\$$MSYSTEM#$(MSYSTEM)#g" |\
+	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > installer/plcopen_editor.cmd
+    
 	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" $(src)/winpaths.py |\
 	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > installer/winpaths.py
+
 	touch $@
 
 Beremiz-portable.zip: Beremiz-windows-build
@@ -177,9 +186,7 @@ VERSIONPY=sources/beremiz/version.py
 
 Beremiz-nsis-installer.exe: Beremiz-windows-build $(src)/install.nsi 
 	export BVERSION=`python3 $(VERSIONPY)` ;\
-	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/install.nsi |\
-	sed -e "s#\$$MSYS_DIR#$(MSYS_DIR)#g" |\
-	sed -e "s#\$$MSYS_ENV_DIR#$(MSYS_ENV_DIR)#g" > install.nsi
+	sed -e "s/\$$BVERSION/$$BVERSION/g" $(src)/install.nsi > install.nsi
 	makensis install.nsi
 
 
