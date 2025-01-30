@@ -76,3 +76,5 @@ jobs:
           ${{ github.workspace }}/build/Beremiz-*.exe
           ${{ github.workspace }}/build/Beremiz-*.zip
         retention-days: 5
+        overwrite: true
+
