@@ -19,9 +19,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: source_package
+        path: ./sources
 
     - name: untar files
-      run: tar -xvf sources.tar
+      run: tar -xvf ./sources/sources.tar
 
     - name: Cache docker image
       id: cache-docker
@@ -32,26 +33,24 @@ jobs:
         path: /tmp/latest.tar
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('beremiz_public_dist/Dockerfile', 'beremiz_public_dist/*.sh') }}
 
-    - if: ${{ steps.cache-docker.outputs.cache-hit == false }}
-      name: Create docker image
+    - name: Create docker image
+      if: steps.cache-docker.outputs.cache-hit != 'true'
       run: |
         cd beremiz_public_dist
         ./build_docker_image.sh
         docker image save --output="/tmp/latest.tar" beremiz_public_builder
 
-
-    - if: ${{ steps.cache-docker.outputs.cache-hit == false }}
-      name: Save docker image in cache
-      id: cache-docker-save
-      uses: actions/cache/save@v3
+    - name: Save docker image in cache
+      if: steps.cache-docker.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
       with:
         path: /tmp/latest.tar
         key: ${{ steps.cache-docker.outputs.cache-primary-key }}
 
-    - if: ${{ steps.cache-docker.outputs.cache-hit != false }}
-      name: Re-use docker image
+    - name: Re-use docker image
+      if: steps.cache-docker.outputs.cache-hit == 'true'
       run: |
-        docker image load --input="/tmp/latest.tar" 
+        docker image load --input="/tmp/latest.tar"
 
     - name: Create docker container
       run: |
@@ -77,4 +76,3 @@ jobs:
           ${{ github.workspace }}/build/Beremiz-*.exe
           ${{ github.workspace }}/build/Beremiz-*.zip
         retention-days: 5
-
