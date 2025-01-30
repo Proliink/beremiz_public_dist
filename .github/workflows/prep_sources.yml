@@ -18,40 +18,42 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           path: beremiz_public_dist
 
     # repositories are directly checked out where Makerfile expects them to be
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/beremiz
           ref: ${{ env.beremiz_revisionid }}
           path: build/sources/beremiz
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/matiec
           ref: ${{ env.matiec_revisionid }}
           path: build/sources/matiec
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/canfestival
           ref: ${{ env.canfestival_revisionid }}
           path: build/sources/canfestival
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/Modbus
           ref: ${{ env.Modbus_revisionid }}
           path: build/sources/Modbus
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: open62541/open62541
           ref: ${{ env.open62541_revisionid }}
           path: build/sources/open62541
+          pattern: build/sources/open62541-*
+          merge-multiple: true
 
     - name: Keep Makfile satisfied and generate revisions.txt
       run: |
@@ -79,7 +81,8 @@ jobs:
       run: tar -cvf sources.tar .
 
     - name: Upload source artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: source_package
         path: sources.tar
+        overwrite: true
