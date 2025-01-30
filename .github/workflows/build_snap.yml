@@ -16,7 +16,7 @@ jobs:
     steps:
 
     - name: Download source artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: source_package
 
@@ -29,15 +29,15 @@ jobs:
         mv build/revisions.txt build/sources/revisions.txt
 
     - name: Invoke snapcraft build
-      uses: snapcore/action-build@v1
+      uses: snapcore/action-build@v4
       id: snapcraft
       with:
         path: build/sources
 
     - name: Upload built artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: snap
-        path: ${{ steps.snapcraft.outputs.snap }}
+        path: file-${{ steps.snapcraft.outputs.snap }}
 
 
