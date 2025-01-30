@@ -3,7 +3,6 @@ name: Prepare sources
 on:
   workflow_call:
 
-
 jobs:
   get_sources:
     runs-on: ubuntu-latest
@@ -15,7 +14,6 @@ jobs:
         Modbus_revisionid: 4d7d67a8e911d744165709c20a254b5cb924ec71
         # v1.3.7
         open62541_revisionid: b8ac9e77f703e6ba5c012b886a8821037503daa6
-
 
     steps:
     - uses: actions/checkout@v4
@@ -52,8 +50,6 @@ jobs:
           repository: open62541/open62541
           ref: ${{ env.open62541_revisionid }}
           path: build/sources/open62541
-          pattern: build/sources/open62541-*
-          merge-multiple: true
 
     - name: Keep Makfile satisfied and generate revisions.txt
       run: |
@@ -85,4 +81,4 @@ jobs:
       with:
         name: source_package
         path: sources.tar
-        overwrite: true
+        retention-days: 5
