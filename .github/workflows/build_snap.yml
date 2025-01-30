@@ -30,7 +30,7 @@ jobs:
         mv build/revisions.txt build/sources/revisions.txt
 
     - name: Invoke snapcraft build
-      uses: snapcore/action-build@v4
+      uses: snapcore/action-build@v1
       id: snapcraft
       with:
         path: build/sources
