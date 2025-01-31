@@ -68,13 +68,17 @@ jobs:
             Modbus_revisionid=stamp \
             open62541_revisionid=stamp
 
+    - name: Debug: List built files
+      run: ls -lah ${{ github.workspace }}/build
+
+
+
     - name: Upload built artifact
       uses: actions/upload-artifact@v4
       with:
         name: windows_bundles
         path: |
-          ${{ github.workspace }}/build/Beremiz-*.exe
-          ${{ github.workspace }}/build/Beremiz-*.zip
+          build/Beremiz-*.exe
+          build/Beremiz-*.zip
         retention-days: 5
         overwrite: true
-
