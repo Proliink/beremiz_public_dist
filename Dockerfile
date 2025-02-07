@@ -2,13 +2,13 @@
 
 FROM ubuntu:noble
 
-ENV TERM xterm-256color
+ENV TERM=xterm-256color
 
-ENV TZ America/Paris
-ENV DEBIAN_FRONTEND noninteractive
+ENV TZ=America/Paris
+ENV DEBIAN_FRONTEND=noninteractive
 
 ARG UNAME=runner
-ENV UNAME ${UNAME}
+ENV UNAME=${UNAME}
 ARG UID=1000
 ARG GID=1000
 
@@ -22,9 +22,11 @@ COPY ./provision_noble64.sh .
 
 RUN ./provision_noble64.sh
 
+RUN apt-get update && apt-get install -y wget
+
 # easy to remember 'build' alias to invoke main makefile
 ARG OWNDIRBASENAME=beremiz_public_dist
-ENV OWNDIRBASENAME ${OWNDIRBASENAME}
+ENV OWNDIRBASENAME=${OWNDIRBASENAME}
 RUN /bin/echo -e '#!/bin/bash\nmake -f /home/'$UNAME'/src/'$OWNDIRBASENAME'/Makefile $*' > /usr/local/bin/build
 RUN chmod +x /usr/local/bin/build
 
