@@ -1,35 +1,35 @@
-# Win32 only distribution
-
 main_target: Beremiz-nsis-installer.exe Beremiz-portable.zip
 
 include $(src)/windows_installer.mk
 
-ide_targets_from_dist:
+DIST_FROM_SOURCE_PROJECTS = Modbus
+
+# Alvo principal que depende da construção do Modbus
+ide_targets_from_dist: Modbus
 	touch $@
 
-# TODO CANFESTIVAL
-# TODO MODBUS
-# TODO OPCUA
+# Definição de variáveis
+Modbus_dir = installer/Modbus
 
-# DIST_FROM_SOURCE_PROJECTS=canfestival Modbus open62541
+# Regra principal para construir o Modbus
+Modbus: $(Modbus_dir)/.stamp
 
-# ide_targets_from_dist: canfestival Modbus open62541
-# 	touch $@
+# Regra detalhada para construção
+$(Modbus_dir)/.stamp: sources/Modbus_src | installer
+	@echo "Building Modbus..."
+	rm -rf $(Modbus_dir)
+	mkdir -p $(Modbus_dir)
+	cp -a sources/Modbus/* $(Modbus_dir)/  # Note a mudança para copiar o conteúdo
+    
+	$(MAKE) -C $(Modbus_dir) || exit 1
+	cd $(Modbus_dir) && find . -name "*.o" -exec rm {} \;  # Limpeza
+	touch $@
 
+# Garante que o diretório installer existe
+installer:
+	mkdir -p installer
 
-# canfestival_dir = installer/canfestival
-# canfestival: $(canfestival_dir)/.stamp
-# $(canfestival_dir)/.stamp: sources/canfestival_src | installer
-# canfestival: $(canfestival_dir)/.stamp
-# 	rm -rf $(canfestival_dir)
-# 	cp -a sources/canfestival $(canfestival_dir)
-# 	cd $(canfestival_dir); \
-# 	./configure --can=tcp_win32 \
-# 				--cc=$(CC) \
-# 				--cxx=$(CXX) \
-# 				--target=win32 \
-# 				--wx=0
-# 	$(MAKE) -C $(canfestival_dir)
-# 	cd $(canfestival_dir); find . -name "*.o" -exec rm {} ';' #remove object files only
-# 	touch $@
-
+.PHONY: clean
+clean:
+	rm -rf $(Modbus_dir)
+	rm -f ide_targets_from_dist
