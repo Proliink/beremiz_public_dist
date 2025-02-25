@@ -4,17 +4,17 @@ include $(src)/windows_installer.mk
 
 DIST_FROM_SOURCE_PROJECTS = Modbus
 
-# Alvo principal que depende da construção do Modbus
+# Main target that depends on Modbus build
 ide_targets_from_dist: Modbus
 	touch $@
 
-# Definição de variáveis
+# Variable definition
 Modbus_dir = installer/Modbus
 
-# Regra principal para construir o Modbus
+# Main rule for building Modbus
 Modbus: $(Modbus_dir)/.stamp
 
-# Regra detalhada para construção
+# Detailed rule for construction
 $(Modbus_dir)/.stamp: sources/Modbus_src | installer
 	@echo "Building Modbus..."
 	rm -rf $(Modbus_dir)
@@ -25,7 +25,7 @@ $(Modbus_dir)/.stamp: sources/Modbus_src | installer
 	cd $(Modbus_dir) && find . -name "*.o" -exec rm {} \;  # Limpeza
 	touch $@
 
-# Garante que o diretório installer existe
+# Ensures the installer directory exists
 installer:
 	mkdir -p installer
 
