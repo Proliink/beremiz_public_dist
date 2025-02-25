@@ -3,51 +3,49 @@ name: Prepare sources
 on:
   workflow_call:
 
-
 jobs:
   get_sources:
     runs-on: ubuntu-latest
 
     env:
-        beremiz_revisionid: 34d4c77ccb1bcb14601ab347ec6080466b7e143d
+        beremiz_revisionid: 7b174fc5fb7b834186cf2d37cd9bf17756a6c85f
         matiec_revisionid: d3196244bf50b2d6d512a0240e10dfa75edbeb7b
         canfestival_revisionid: 12a05e422666c738d1312259703f80150c747cb5
         Modbus_revisionid: 4d7d67a8e911d744165709c20a254b5cb924ec71
         # v1.3.7
         open62541_revisionid: b8ac9e77f703e6ba5c012b886a8821037503daa6
 
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           path: beremiz_public_dist
 
     # repositories are directly checked out where Makerfile expects them to be
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/beremiz
           ref: ${{ env.beremiz_revisionid }}
           path: build/sources/beremiz
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/matiec
           ref: ${{ env.matiec_revisionid }}
           path: build/sources/matiec
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/canfestival
           ref: ${{ env.canfestival_revisionid }}
           path: build/sources/canfestival
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: beremiz/Modbus
           ref: ${{ env.Modbus_revisionid }}
           path: build/sources/Modbus
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
           repository: open62541/open62541
           ref: ${{ env.open62541_revisionid }}
@@ -79,7 +77,8 @@ jobs:
       run: tar -cvf sources.tar .
 
     - name: Upload source artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: source_package
         path: sources.tar
+        retention-days: 5
